@@ -71,7 +71,7 @@ app = Flask(__name__)
 @app.route("/")
 def generate_article():
     journalist_instance = journalist()
-    article_content = journalist_instance.create_article("View.jpg")
+    article_content = journalist_instance.create_article(".\View.jpg")
     return article_content
 
 if __name__ == "__main__":
