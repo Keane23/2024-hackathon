@@ -9,12 +9,11 @@ def encode_image(image_path):
   with open(image_path, "rb") as image_file:
     return base64.b64encode(image_file.read()).decode('utf-8')
 
-# Path to your image
 image_path = "Cats.jpg"
-
-# Getting the base64 string
 base64_image = encode_image(image_path)
 
+
+# Recieving openai's response
 response = client.chat.completions.create(
   model="gpt-4o-mini",
   messages=[
@@ -46,9 +45,10 @@ response = client.chat.completions.create(
   ],
 )
 
+# Removing all uneccessary text
 ai_response = str(response.choices[0])
-old = ai_response.replace("Choice(finish_reason='stop', index=0, logprobs=None, message=ChatCompletionMessage(content=", "")
-new = old.replace(", refusal=None, role='assistant', audio=None, function_call=None, tool_calls=None))", "")
+old = ai_response.replace("Choice(finish_reason='stop', index=0, logprobs=None, message=ChatCompletionMessage(content='", "")
+new = old.replace("', refusal=None, role='assistant', audio=None, function_call=None, tool_calls=None))", "")
 
 file = open("article.txt", "w")
 file.write(new)
