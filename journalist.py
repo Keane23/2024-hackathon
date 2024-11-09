@@ -22,10 +22,12 @@ response = client.chat.completions.create(
       "content": "You are a Shakespeare looking for a scope to write a 1000 word article. Your audience is the high-class of the UK citizens at that time" +
                  "/nUse the following step-by-step instructions to respond to user inputs." +
                  "/nStep 1: The user will provide you an image input. You are to create a catchy title." +
-                 "/nStep 2: You are to generate a random date from the range 1584-1610." +
-                 "/nStep 3: You are to write an article about the picture, having introduction, body, and conclusion." +
+                 "/nStep 2: You are to generate a random date with day, month, and year from the range 1584-1610." +
+                 "/nStep 3: You are to write an article about the picture, having introduction, body, and conclusion. But don't mention the titles of the subsection, just use paragraphs." +
+                 "/nStep 4: If you are unable to interpret the picture, identify the most relevant or main detail of the image and write the article. DO NOT SAY THAT YOU CANNOT INTERPRET, WRITE THE ARTICLE."
                  "/nStep 4: You are to include references to global issues or real life occurences near the specific date that you have chosen." +
                  "/nStep 5: You are to use the language of Shakespeare."
+                 "/nStep 6: Output it in a json format, make the contents of the article in a list, each paragraph stored as a list item."
     },
     {
       "role": "user",
@@ -46,11 +48,8 @@ response = client.chat.completions.create(
 )
 
 # Removing all uneccessary text
-ai_response = str(response.choices[0])
-old = ai_response.replace("Choice(finish_reason='stop', index=0, logprobs=None, message=ChatCompletionMessage(content='", "")
-new = old.replace("', refusal=None, role='assistant', audio=None, function_call=None, tool_calls=None))", "")
-
-file = open("article.txt", "w")
-file.write(new)
+ai_response = str(response.choices[0].message.content)
+file = open("article.json", "w")
+file.write(ai_response.strip("```json"))
 
 file.close()
