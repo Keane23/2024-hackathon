@@ -68,7 +68,6 @@ class journalist:
 
 app = Flask(__name__)
 
-
 @app.route("/")
 def generate_article():
     journalist_instance = journalist()
