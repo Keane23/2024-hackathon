@@ -1,13 +1,17 @@
-import { Text, View } from "react-native";
-import { Button } from 'react-native';
-import { useRouter } from 'expo-router';
+import React from 'react';
+import { Button, View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import styles from '../assets/style';
+import {Link} from 'expo-router'
 
 export default function Index() {
-  const router = useRouter();
+  const navigation = useNavigation();
+
   return (
-    <Button
-      title="Go to User Page"
-      onPress={() => router.push('/user')} 
-    />
+    <View style={styles.container}>
+      <Text style={styles.title}>Projects</Text>
+      <Link href="/article">Go to article</Link>
+      <Link href="/upload">Go to upload</Link>
+    </View>
   );
 }
