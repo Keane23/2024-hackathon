@@ -1,15 +1,13 @@
 import { Text, View } from "react-native";
+import { Button } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function Index() {
+  const router = useRouter();
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>This contains all the projecsy</Text>
-    </View>
+    <Button
+      title="Go to User Page"
+      onPress={() => router.push('/user')} 
+    />
   );
 }
