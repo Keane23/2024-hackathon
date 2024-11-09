@@ -10,6 +10,12 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       marginTop: 20,
     },
+    articletext: {
+      fontSize: 16,
+      textAlign: 'center',
+      fontFamily: 'ChopinScript',
+      color: 'dark'
+    },
     container: {
       flex: 1,
       justifyContent: 'center',
@@ -29,8 +35,8 @@ const styles = StyleSheet.create({
       color: '#fff',
     },
     imageContainer: {
-      width: 300,
-      height: 300,
+      width: 600,
+      height: 600,
       borderColor: 'black',
       borderWidth: 1,
       alignItems: 'center',
@@ -50,14 +56,16 @@ const styles = StyleSheet.create({
     articlesContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      justifyContent: 'flex-start',
+      justifyContent: 'center',
+      minWidth: 300,
+      minHeight: 300,
     },
     articleBox: {
-      width: '48%',
-      margin: '1%',
+      margin: '2%',
       borderRadius: 15,
-      borderWidth: 1,
-      borderColor: 'gray',
+      width: 330,
+      height: 330,
+      backgroundColor: '#F0F0F0',
       overflow: 'hidden',
       padding: 10,
       alignItems: 'center',
@@ -69,7 +77,9 @@ const styles = StyleSheet.create({
     },
     articleImage: {
       width: '100%',
-      height: 100,
+      height: 265,
+      width: 290,
+      borderRadius: 3,
       marginBottom: 10,
     },
     articleTitle: {
@@ -80,6 +90,13 @@ const styles = StyleSheet.create({
       fontSize: 40,
       fontWeight: 'bold',
       color: 'gray',
+    },
+    textgen: {
+      fontSize: 10,
+      fontWeight: 'black',
+      fontFamily: 'Helvetica',
+      color: 'gray',
+      marginBottom: 20,
     },
 
   });

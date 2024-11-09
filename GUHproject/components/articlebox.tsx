@@ -19,7 +19,7 @@ const ArticleBox: React.FC<ArticleBoxProps> = ({ title, imageUri, onPress }) => 
             <Image source={imageUri} style={styles.articleImage} />
           )
         ) : (
-          <Text style={styles.plusSign}>+</Text>
+          <Text style={styles.plusSign}>&#128204;</Text>
         )}
         <Text style={styles.articleTitle}>{title}</Text>
       </View>

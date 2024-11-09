@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../assets/style';
-import ArticleBox from '../components/articlebox'
+import ArticleBox from '../components/articlebox';
+
 const userArticles = [
-  { id: 1, title: 'First Article', image: require('../assets/images/plus.png')},
-  { id: 2, title: 'Second Article', image: 'https://via.placeholder.com/150' },
+  { id: 1, title: 'not defined yet', image: 'https://via.placeholder.com/150'},
 ];
 export default function Index() {
   const navigation = useNavigation();
@@ -15,13 +15,17 @@ export default function Index() {
   };
 
   const handleCreateNewProject = () => {
-    navigation.navigate('Article');
+    navigation.navigate('Upload');
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Projects</Text>
+      <Text style={styles.textgen}>Read into the memories of an earlier time...</Text>
       <ScrollView contentContainerStyle={styles.articlesContainer}>
+       <ArticleBox
+          onPress={handleCreateNewProject}
+        />
         {userArticles.map((article) => (
           <ArticleBox
             key={article.id}
@@ -30,10 +34,7 @@ export default function Index() {
             onPress={() => handleArticlePress(article.id)}
           />
         ))}
-        <ArticleBox
-          title="New Project"
-          onPress={handleCreateNewProject}
-        />
+        
       </ScrollView>
     </View>
   );
