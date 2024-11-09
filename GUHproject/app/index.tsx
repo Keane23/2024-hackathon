@@ -10,6 +10,11 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Projects</Text>
+      <View id="row">
+        <View id="col">
+
+        </View>
+      </View>
       <Link href="/article">Go to article</Link>
       <Link href="/upload">Go to upload</Link>
     </View>
