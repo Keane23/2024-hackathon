@@ -1,6 +1,8 @@
 import openai
 import os
 import base64
+import json
+from flask import Flask, jsonify
 
 class journalist:
     
@@ -15,7 +17,6 @@ class journalist:
 
         image_path = image
         base64_image = encode_image(image_path)
-
 
         # Recieving openai's response
         response = client.chat.completions.create(
@@ -62,9 +63,17 @@ class journalist:
         print(ai_response)
         file = open("article.json", "w")
         file.write(ai_response)
+        
+        return json.loads(ai_response)
 
-        file.close()
+app = Flask(__name__)
+
+
+@app.route("/")
+def generate_article():
+    journalist_instance = journalist()
+    article_content = journalist_instance.create_article("View.jpg")
+    return article_content
 
 if __name__ == "__main__":
-    new_article = journalist()
-    new_article.create_article("View.jpg")
+    app.run(debug=True)
