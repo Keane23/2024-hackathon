@@ -1,23 +1,20 @@
 import React from 'react';
-import { Button, View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../assets/style';
-import ArticleBox from '../components/articlebox';
-import {Link} from 'expo-router';
-import Plus from '../assets/style';
+import ArticleBox from '../components/articlebox'
 const userArticles = [
-  { id: 1, title: 'First Article', image: Plus},
+  { id: 1, title: 'First Article', image: require('../assets/images/plus.png')},
   { id: 2, title: 'Second Article', image: 'https://via.placeholder.com/150' },
 ];
-
 export default function Index() {
   const navigation = useNavigation();
 
   const handleArticlePress = (articleId: number) => {
     navigation.navigate('Article', { articleId });
   };
+
   const handleCreateNewProject = () => {
-    console.log('Create a new project');
     navigation.navigate('Article');
   };
 
