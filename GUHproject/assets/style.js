@@ -41,10 +41,45 @@ const styles = StyleSheet.create({
       width: '100%',
       height: '100%',
     },
-    #row: {
+    article_title: {
+      fontSize: 30,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      marginBottom: 20,
+    },
+    articlesContainer: {
       flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'flex-start',
+    },
+    articleBox: {
+      width: '48%',
+      margin: '1%',
+      borderRadius: 15,
+      borderWidth: 1,
+      borderColor: 'gray',
+      overflow: 'hidden',
+      padding: 10,
       alignItems: 'center',
+      justifyContent: 'center',
+    },
+    articleContent: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    articleImage: {
+      width: '100%',
+      height: 100,
       marginBottom: 10,
+    },
+    articleTitle: {
+      fontSize: 16,
+      textAlign: 'center',
+    },
+    plusSign: {
+      fontSize: 40,
+      fontWeight: 'bold',
+      color: 'gray',
     },
 
   });
