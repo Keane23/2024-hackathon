@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet} from 'react-native';
 import {useFonts} from 'expo-font';
 const [fontsLoaded] = useFonts({
   'ChopinScript': require('../assets/fonts/ChopinScript.ttf'), 
