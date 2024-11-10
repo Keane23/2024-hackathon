@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image} from 'react-native';
 import styles from '../assets/style';
-
+import blur from '../assets/images/blur1.jpg';
 interface ArticleBoxProps {
   title: string;
   imageUri?: string | { uri: string };
@@ -19,7 +19,9 @@ const ArticleBox: React.FC<ArticleBoxProps> = ({ title, imageUri, onPress }) => 
             <Image source={imageUri} style={styles.articleImage} />
           )
         ) : (
-          <Text style={styles.plusSign}>&#128204;</Text>
+            <View>
+          <Image source={blur} style={styles.articleImage} />
+          </View>
         )}
         <Text style={styles.articleTitle}>{title}</Text>
       </View>
