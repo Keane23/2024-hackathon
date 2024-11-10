@@ -5,7 +5,7 @@ export default function Article({navigation,route}) {
     return (
         <View>
             <Text style={styles.title}>hi</Text>
-            
+                
             <Text></Text>
         </View>
   );
