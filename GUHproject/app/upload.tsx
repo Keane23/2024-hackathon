@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Image, View, Text, Platform,StyleSheet,ScrollView} from 'react-native';
+import { Button, Image, View, Text, Platform,StyleSheet,ScrollView,Alert} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import styles from "../assets/style"
 import axios ,{AxiosError} from 'axios';
@@ -67,6 +67,7 @@ export default function Upload() {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [jsonData,setjsonData] = useState<any>(null);
+  const [pdfGenerated, setPdfGenerated] = useState(false);
 
   const pickImage = async () => {
     console.log("pick image pressed");
@@ -144,10 +145,119 @@ export default function Upload() {
     
   }
   
+  const generateHTML = async () => {
+    if (!jsonData) {
+      Alert.alert('Error', 'No article data available.');
+      return;
+    }
+  
+    const imageBase64 = generatedImage ? generatedImage.split(",")[1] : "";
+  
+    const htmlContent = `
+      <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 20px;
+              margin: 0;
+              background-color: #ffffff;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+            .container {
+              width: 100%;
+              max-width: 800px;
+              margin: 0 auto;
+            }
+            .title {
+              font-size: 36px;
+              font-weight: bold;
+              text-align: center;
+              margin-bottom: 10px;
+            }
+            .author-date {
+              font-size: 14px;
+              color: gray;
+              text-align: center;
+              margin-bottom: 20px;
+            }
+            .image {
+              width: 100%;
+              height: auto;
+              max-width: 500px;
+              margin-bottom: 20px;
+              margin-left: auto;
+              margin-right: auto;
+              display: block;
+            }
+            .caption {
+              font-size: 16px;
+              text-align: center;
+              margin-bottom: 20px;
+              font-style: italic;
+            }
+            .article-content {
+              font-size: 16px;
+              line-height: 24px;
+              margin-bottom: 10px;
+            }
+            .article-text {
+              margin-bottom: 15px;
+              padding-left: 20px;
+              padding-right: 20px;
+              text-align: justify;
+            }
+            .button-container {
+              display: flex;
+              justify-content: center;
+              margin-top: 20px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1 class="title">${jsonData.title}</h1>
+            <p class="author-date">${jsonData.author} - ${jsonData.date}</p>
+            ${generatedImage ? `<img class="image" src="data:image/png;base64,${imageBase64}" />` : ''}
+            <p class="caption">${jsonData.caption}</p>
+            <div class="article-content">
+              ${jsonData.article.map((entry: string) => `<p class="article-text">${entry}</p>`).join('')}
+            </div>
+            <div class="button-container">
+              <button onclick="window.print()">Print Article</button>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+  
+    if (Platform.OS === 'web') {
+      // Web platform: Create a downloadable link
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = jsonData.title+ '.html'; // Trigger the download with the file name
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url); // Clean up the object URL
+    } else {
+      // Native platforms: Save file and share
+      const fileUri = FileSystem.documentDirectory + jsonData.title+ '.html';
+      await FileSystem.writeAsStringAsync(fileUri, htmlContent, { encoding: FileSystem.EncodingType.UTF8 });
+      await Sharing.shareAsync(fileUri);
+    }
+  };
+  
 
-  return (
+  if (!jsonData)
+  {return (
     <ScrollView>
     <View style={styles.container}>
+      
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Button title="Choose Image" onPress={pickImage} />
       {imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200, marginTop: 20 }} />}
@@ -158,6 +268,41 @@ export default function Upload() {
     </View>
     </View></ScrollView>
   );
-
+  }
+  else
+  {
+    return (
+      <View style={{ flex: 1 }}>
+        <ScrollView style={localstyles.container}>
+          {/* Title */}
+          <Text style={localstyles.title}>{jsonData.title}</Text>
   
+          {/* Author and Date */}
+          <Text style={localstyles.authorAndDate}>{jsonData.author} - {jsonData.date}</Text>
+  
+          {/* Image with Caption */}
+          {generatedImage && (
+            <Image source={{ uri: generatedImage }} style={localstyles.image} />
+          )}
+          <Text style={localstyles.caption}>{jsonData.caption}</Text>
+  
+          {/* Article Content */}
+          <View style={localstyles.articleContainer}>
+            {jsonData.article.map((entry: string, index: number) => (
+              <Text key={index} style={localstyles.articleText}>{entry}</Text>
+            ))}
+          </View>
+          {/* Generate PDF Button (only displayed after article data is loaded) */}
+          {!pdfGenerated && (
+            <Button title="Generate HTML" onPress={generateHTML} />
+          )}
+
+          {/* Message after PDF is generated */}
+          {pdfGenerated && <Text style={{ color: 'green', textAlign: 'center' }}>PDF generated successfully!</Text>}
+        </ScrollView>
+      </View>
+    );
+  }
 }
+  
+
