@@ -1,15 +1,21 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from 'expo-router';
 import styles from '../assets/style';
 import ArticleBox from '../components/articlebox';
+import { RootStackParamList } from './rootstackparam';
 
+import {NativeStackNavigationProp} from '@react-navigation/native-stack'
+type IndexScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'index'>;
 const userArticles = [
   { id: 1, title: 'not defined yet', image: 'https://via.placeholder.com/150'},
 ];
-export default function Index() {
-  const navigation = useNavigation();
 
+
+  
+export default function Index() {
+  const navigation = useNavigation<IndexScreenNavigationProp>();
+  console.log(navigation)
   const handleArticlePress = (articleId: number) => {
     navigation.navigate('article', { articleId });
   };

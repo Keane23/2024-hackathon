@@ -1,6 +1,6 @@
 import {Text,View} from 'react-native'
 import styles from '../assets/style';
-export default function Article({navigation,route}) {
+export default function Article() {
   
     return (
         <View>

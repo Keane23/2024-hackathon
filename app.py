@@ -71,9 +71,13 @@ def age_image(input_image_path,output_image_path):
 def age_image_flask():
     start = time.time()
     data = request.get_json()
+    print(data)
     point1 = time.time()
     print(f"{point1-start} to get json")
-    inputb64 = data['image'].split(",")[1]
+    try:
+        inputb64 = data['image'].split(",")[1]
+    except:
+        inputb64 = data
     point2 = time.time()
     print(f"{point2-point1} to split")
     image = Image.open(BytesIO(base64.b64decode(inputb64))).convert("RGB")
@@ -112,6 +116,6 @@ def age_image_flask():
     print(f"{point11-start} to finish")
     return x
 
-# age_image(sys.argv[1],sys.argv[2])
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
