@@ -68,6 +68,7 @@ export default function Upload() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [jsonData,setjsonData] = useState<any>(null);
   const [pdfGenerated, setPdfGenerated] = useState(false);
+  const [base64Image, setBase64Image] = useState<string|null>(null);
 
   const pickImage = async () => {
     console.log("pick image pressed");
@@ -100,12 +101,26 @@ export default function Upload() {
     }
   };
 
-  const toBackend = async (b64Image:string|null|undefined,mobile:boolean) =>{
+  const convertUriToBase64 = async (uri:string) => {
+    try {
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      setBase64Image(base64);
+    } catch (error) {
+      console.error('Error converting image to Base64:', error);
+    }
+  };
+
+  const toBackend = async (b64Image:string,mobile:boolean) =>{
     console.log(b64Image)
     var ip;
+    var b64Image2;
     if (mobile)
     {
       ip = "http://10.205.212.240:5000/generate"
+      b64Image2 = convertUriToBase64(b64Image);
+      b64Image = `data:image/png;base64,${base64Image}`;
     }
     else
     {
