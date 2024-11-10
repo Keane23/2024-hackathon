@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image} from 'react-native';
 import styles from '../assets/style';
-import blur from '../assets/images/2496.jpg';
+import blur from '../assets/images/blur1.jpg';
 interface ArticleBoxProps {
   title: string;
   imageUri?: string | { uri: string };
