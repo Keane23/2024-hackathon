@@ -88,16 +88,11 @@ export default function Upload() {
       console.log("image set")
       setImageUri(result.assets[0].uri);
       console.log(result.assets[0].uri);
-      if (Platform.OS === "ios")
-      {
-        const base64Image = await FileSystem.readAsStringAsync(result.assets[0].uri, {encoding: FileSystem.EncodingType.Base64})
-        toBackend(base64Image,true)
-      }
-      else if(Platform.OS === "android"){
-        toBackend(result.assets[0].uri,true)
+      if(Platform.OS === "web"){
+        toBackend(result.assets[0].uri,false)
       }
       else {
-      toBackend(result.assets[0].uri,false);}
+      toBackend(result.assets[0].uri,true);}
     }
   };
 
