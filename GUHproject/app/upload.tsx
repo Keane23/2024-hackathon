@@ -1,20 +1,75 @@
 import React, { useState } from 'react';
-import { Button, Image, View, Text, Platform,Alert,ScrollView} from 'react-native';
+import { Button, Image, View, Text, Platform,StyleSheet,ScrollView} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import styles from "../assets/style"
-import * as FileSystem from 'expo-file-system'
+import axios ,{AxiosError} from 'axios';
+import * as FileSystem from 'expo-file-system';
+import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import axios from 'axios';
 
 interface ImageResponse {
   generatedImage: string;
+  jsonData:string;
 }
+
+interface ArticleData {
+  article: string[];
+  author: string;
+  caption: string;
+  date: string;
+  title: string;
+  tone: string;
+}
+
+const localstyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  authorAndDate: {
+    fontSize: 14,
+    color: 'gray',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    marginBottom: 10,
+  },
+  caption: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+    fontStyle: 'italic',
+  },
+  articleContainer: {
+    marginBottom: 20,
+  },
+  articleText: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 10,
+  },
+});
+
+
 
 export default function Upload() {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [jsonData,setjsonData] = useState<any>(null);
 
   const pickImage = async () => {
+    console.log("pick image pressed");
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
       alert("Permission to access media library is required!");
@@ -31,76 +86,63 @@ export default function Upload() {
       console.log("image set")
       setImageUri(result.assets[0].uri);
       console.log(result.assets[0].uri);
-      toBackend(result.assets[0].uri);
+      if (Platform.OS === "ios")
+      {
+        const base64Image = await FileSystem.readAsStringAsync(result.assets[0].uri, {encoding: FileSystem.EncodingType.Base64})
+        toBackend(base64Image,true)
+      }
+      else if(Platform.OS === "android"){
+        toBackend(result.assets[0].uri,true)
+      }
+      else {
+      toBackend(result.assets[0].uri,false);}
     }
   };
 
-  const toBackend = async (b64Image:string|null|undefined) =>{
+  const toBackend = async (b64Image:string|null|undefined,mobile:boolean) =>{
+    console.log(b64Image)
+    var ip;
+    if (mobile)
+    {
+      ip = "http://10.205.212.240:5000/generate"
+    }
+    else
+    {
+      ip = "http://127.0.0.1:5000/generate"
+    }
     try {
-      const response = await axios.post<ImageResponse>('http://127.0.0.1:5000/generate', {
+      const response = await axios.post<ImageResponse>(ip, {
         image: b64Image, // Send the base64 image string
       });
+      console.log('Response:', response.data);
       setGeneratedImage(`data:image/png;base64,${response.data.generatedImage}`);
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    }
-  }
-
-  const downloadImage = async (uri: string|null) => {
-    console.log("downloadimage called");
-  if (!uri) {
-    console.log("no image");
-    Alert.alert('Error', 'No image to download');
-    return;
-  }
-
-  try {
-    if (Platform.OS === 'web') {
-      // For web, create a download link with Blob
-      const byteCharacters = atob(uri.split(',')[1]); // Decode base64 string
-      const byteArrays = [];
-
-      for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-        const slice = byteCharacters.slice(offset, offset + 1024);
-        const byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i++) {
-          byteNumbers[i] = slice.charCodeAt(i);
-        }
-        byteArrays.push(new Uint8Array(byteNumbers));
+      console.log("image set");
+      setjsonData(response.data.jsonData);
+      if (jsonData){
+        console.log("text set");
       }
-
-      const blob = new Blob(byteArrays, { type: 'image/png' });
-      const url = URL.createObjectURL(blob);
-
-      // Create a link element to trigger the download
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'downloaded_image.png';
-      link.click();
-      URL.revokeObjectURL(url);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        // Handle AxiosError
+        if (error.response) {
+          // Server responded with a status code outside the range of 2xx
+          console.error('Server Error:', error.response.data);
+          console.error('Status:', error.response.status);
+          console.error('Headers:', error.response.headers);
+        } else if (error.request) {
+          // No response was received
+          console.error('No response received:', error.request);
+        } else {
+          // Some other Axios error
+          console.error('Axios error:', error.message);
+        }
+      } else {
+        // Handle non-AxiosError
+        console.error('Unexpected error:', error);
+      }
     }
-    else{
-    // Define a local path where the image will be saved
-    const path = FileSystem.documentDirectory + 'downloaded_image.png';
-
-    // Write the base64 string to the file system
-    await FileSystem.writeAsStringAsync(path, uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-
-    // Notify the user that the image is saved
-    Alert.alert('Success', `Image saved to ${path}`);
-
-    // Optionally, you can share the file (using Expo Sharing)
-    if (await Sharing.isAvailableAsync()) {
-      Sharing.shareAsync(path);
-    }}
-  } catch (error) {
-    console.error('Error saving image', error);
-    console.log("failure")
-    Alert.alert('Error', 'Failed to download image');
+    
   }
-}
   
 
   return (
@@ -111,7 +153,11 @@ export default function Upload() {
       {imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200, marginTop: 20 }} />}
       {generatedImage && <Image source={{ uri: generatedImage }} style={{ width: 200, height: 200, marginTop: 20 }} />}
       {generatedImage && <Text style={{ marginTop: 20 }}>Processed Image</Text>}
+      {jsonData && <Text>${JSON.stringify(jsonData)}</Text>}
+   
     </View>
     </View></ScrollView>
   );
+
+  
 }

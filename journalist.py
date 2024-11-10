@@ -2,21 +2,17 @@ import openai
 import os
 import base64
 import json
-from flask import Flask, jsonify
+from dotenv import load_dotenv
 
 class journalist:
     
     def create_article(self, image):
-    
+      
+        load_dotenv(".env")
         client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-        # Function to encode the image
-        def encode_image(image_path):
-          with open(image_path, "rb") as image_file:
-            return base64.b64encode(image_file.read()).decode('utf-8')
-
-        image_path = image
-        base64_image = encode_image(image_path)
+        
+        base64_image = image
 
         # Recieving openai's response
         response = client.chat.completions.create(
@@ -69,13 +65,9 @@ class journalist:
         
         return json.loads(ai_response)
 
-app = Flask(__name__)
 
-@app.route("/")
-def generate_article():
+def generate_article(b64):
     journalist_instance = journalist()
-    article_content = journalist_instance.create_article(".\Views1.jpg")
+    article_content = journalist_instance.create_article(b64)
     return article_content
 
-if __name__ == "__main__":
-    app.run(debug=True)
