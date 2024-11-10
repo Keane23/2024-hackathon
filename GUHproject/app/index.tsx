@@ -11,11 +11,12 @@ export default function Index() {
   const navigation = useNavigation();
 
   const handleArticlePress = (articleId: number) => {
-    navigation.navigate('Article', { articleId });
+    navigation.navigate('article', { articleId });
   };
-
+  
   const handleCreateNewProject = () => {
-    navigation.navigate('Upload');
+    console.log('Create New Project button pressed');
+    navigation.navigate('upload');
   };
 
   return (
@@ -24,6 +25,7 @@ export default function Index() {
       <Text style={styles.textgen}>Read into the memories of an earlier time...</Text>
       <ScrollView contentContainerStyle={styles.articlesContainer}>
        <ArticleBox
+          title="New"
           onPress={handleCreateNewProject}
         />
         {userArticles.map((article) => (
